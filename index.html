@@ -1486,7 +1486,7 @@ async function callClaude(system, messages, useHaiku) {
   setLoading(true);
   const model = useHaiku
     ? 'claude-haiku-4-5-20251001'
-    : 'claude-sonnet-4-20250514';
+    : 'claude-sonnet-4-5';
   const max_tokens = useHaiku ? 800 : 2000;
   try {
     const res = await fetch('https://api.anthropic.com/v1/messages', {
