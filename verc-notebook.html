@@ -1,0 +1,1443 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Verc Notebook</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500&family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #EBEBEB;
+  --surface: #FFFFFF;
+  --surface2: #F5F5F5;
+  --surface3: #FAFAFA;
+  --border: #E8E8E8;
+  --border2: #D4D4D4;
+  --text: #111111;
+  --text2: #555555;
+  --text3: #999999;
+  --accent: #111111;
+  --accent-light: #F0F0F0;
+  --green: #1A6B3C;
+  --green-light: #EBF5EF;
+  --purple: #3D3580;
+  --purple-light: #EEEDF8;
+  --amber: #7A4E0D;
+  --amber-light: #FBF3E6;
+  --red: #7A1F1F;
+  --red-light: #F8EDED;
+  --shadow: 0 1px 2px rgba(0,0,0,0.04), 0 4px 20px rgba(0,0,0,0.06);
+  --shadow-lg: 0 8px 40px rgba(0,0,0,0.12);
+  --radius: 12px;
+  --radius-sm: 7px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  height: 100vh;
+  display: flex;
+  overflow: hidden;
+  font-size: 14px;
+}
+
+/* ── Sidebar ── */
+.sidebar {
+  width: 220px;
+  flex-shrink: 0;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+  box-shadow: 1px 0 0 var(--border);
+}
+
+.sidebar-header {
+  padding: 22px 18px 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.logo {
+  font-family: 'Playfair Display', serif;
+  font-size: 17px;
+  font-weight: 500;
+  color: var(--text);
+  letter-spacing: -0.01em;
+  margin-bottom: 2px;
+}
+
+.logo span { color: var(--text3); font-weight: 400; }
+
+.logo-sub {
+  font-size: 10.5px;
+  color: var(--text3);
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: 0.03em;
+}
+
+.sidebar-section {
+  padding: 14px 18px 5px;
+  font-size: 9.5px;
+  font-weight: 500;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--text3);
+}
+
+.new-entry-btn {
+  margin: 10px 12px;
+  padding: 8px 14px;
+  background: var(--text);
+  color: white;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-family: 'Inter', sans-serif;
+  font-size: 12.5px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: opacity 0.15s;
+}
+.new-entry-btn:hover { opacity: 0.8; }
+.new-entry-btn svg { flex-shrink: 0; }
+
+.entries-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 4px 8px;
+}
+
+.entry-item {
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background 0.1s;
+  margin-bottom: 1px;
+}
+.entry-item:hover { background: var(--surface2); }
+.entry-item.active { background: var(--surface2); }
+.entry-item-date {
+  font-size: 10px;
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--text3);
+  margin-bottom: 2px;
+}
+.entry-item-title {
+  font-size: 12.5px;
+  color: var(--text2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.4;
+}
+.entry-item.active .entry-item-title { color: var(--text); font-weight: 500; }
+
+.sidebar-footer {
+  padding: 12px 18px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.insight-count {
+  font-size: 10.5px;
+  color: var(--text3);
+  font-family: 'JetBrains Mono', monospace;
+}
+.insight-count span { color: var(--text); font-weight: 500; }
+.settings-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text3);
+  padding: 4px;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  transition: all 0.1s;
+}
+.settings-btn:hover { color: var(--text); background: var(--surface2); }
+
+/* ── Main area ── */
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+  min-width: 0;
+}
+
+.toolbar {
+  padding: 0 28px;
+  height: 50px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--surface);
+  flex-shrink: 0;
+}
+
+.toolbar-date {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  color: var(--text3);
+  margin-right: auto;
+}
+
+.tb-btn {
+  padding: 5px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--text2);
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transition: all 0.1s;
+}
+.tb-btn:hover { background: var(--surface2); border-color: var(--border2); color: var(--text); }
+.tb-btn.primary { background: var(--text); color: white; border-color: var(--text); }
+.tb-btn.primary:hover { opacity: 0.85; }
+
+/* ── Content area ── */
+.content-area {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+  min-height: 0;
+  background: var(--bg);
+  gap: 0;
+  padding: 20px;
+  padding-right: 0;
+}
+
+/* ── Document panel — floats on grey bg like the reference ── */
+.doc-panel {
+  flex: 1;
+  overflow-y: auto;
+  min-width: 0;
+  background: var(--surface);
+  border-radius: var(--radius) var(--radius) 0 0;
+  box-shadow: var(--shadow);
+  padding: 36px 44px 60px;
+  margin-right: 20px;
+}
+
+.doc-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  gap: 10px;
+  color: var(--text3);
+}
+.doc-empty-icon {
+  width: 44px; height: 44px;
+  background: var(--surface2);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+}
+.doc-empty h3 { font-size: 14px; font-weight: 500; color: var(--text2); }
+.doc-empty p { font-size: 12.5px; text-align: center; max-width: 240px; line-height: 1.6; }
+
+.doc-title-input {
+  font-family: 'Playfair Display', serif;
+  font-size: 30px;
+  font-weight: 500;
+  color: var(--text);
+  border: none;
+  background: transparent;
+  width: 100%;
+  outline: none;
+  margin-bottom: 8px;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+}
+.doc-title-input::placeholder { color: var(--text3); }
+
+.doc-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+}
+
+.doc-tag {
+  font-size: 10.5px;
+  font-family: 'JetBrains Mono', monospace;
+  padding: 3px 9px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  color: var(--text3);
+}
+.doc-tag.active-client { background: var(--green-light); color: var(--green); border-color: transparent; }
+.doc-tag.active-expert { background: var(--purple-light); color: var(--purple); border-color: transparent; }
+.doc-tag.active-team { background: var(--amber-light); color: var(--amber); border-color: transparent; }
+.doc-tag.active-tech { background: var(--red-light); color: var(--red); border-color: transparent; }
+.doc-tag.active-output { background: var(--surface2); color: var(--text2); border-color: transparent; }
+
+/* ── Doc sections ── */
+.doc-section { margin-bottom: 32px; }
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.section-label {
+  font-size: 9.5px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text3);
+  white-space: nowrap;
+}
+
+.section-divider {
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+/* ── Blocks ── */
+.block {
+  position: relative;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--surface3);
+  margin-bottom: 10px;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.block:hover { border-color: var(--border2); box-shadow: 0 1px 6px rgba(0,0,0,0.05); }
+.block.has-comment { border-color: #E0D080; background: #FFFEF5; }
+
+.block-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 14px 0;
+}
+
+.block-person-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.block-name {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text);
+}
+
+.block-role {
+  font-size: 10.5px;
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--text3);
+}
+
+.block-body {
+  padding: 7px 14px 13px;
+  font-size: 13.5px;
+  color: var(--text2);
+  line-height: 1.75;
+  white-space: pre-wrap;
+  cursor: text;
+  outline: none;
+  min-height: 40px;
+  font-weight: 300;
+}
+.block-body:focus { outline: none; color: var(--text); }
+
+.block-actions {
+  display: none;
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  gap: 3px;
+}
+.block:hover .block-actions { display: flex; }
+
+.block-btn {
+  width: 24px; height: 24px;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  background: var(--surface);
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.1s;
+  color: var(--text3);
+}
+.block-btn:hover { background: var(--surface2); color: var(--text); border-color: var(--border2); }
+.block-btn.comment-active { background: #FFF8CC; border-color: #E0D080; color: #7A6A10; }
+
+.comment-thread {
+  display: none;
+  padding: 10px 14px 12px;
+  border-top: 1px solid #F0EBD0;
+  background: #FFFEF5;
+  border-radius: 0 0 var(--radius) var(--radius);
+}
+.comment-thread.open { display: block; }
+
+.comment-item { margin-bottom: 8px; }
+.comment-role {
+  font-size: 9.5px;
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--text3);
+  margin-bottom: 3px;
+}
+.comment-role.you { color: var(--amber); }
+.comment-role.claude { color: var(--purple); }
+.comment-text {
+  font-size: 12.5px;
+  color: var(--text);
+  line-height: 1.6;
+  background: var(--surface);
+  border-radius: var(--radius-sm);
+  padding: 7px 10px;
+  border: 1px solid var(--border);
+}
+.comment-input-row { display: flex; gap: 6px; margin-top: 8px; }
+.comment-input {
+  flex: 1;
+  padding: 7px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-family: 'Inter', sans-serif;
+  font-size: 12.5px;
+  background: var(--surface);
+  color: var(--text);
+  outline: none;
+}
+.comment-input:focus { border-color: var(--border2); }
+.comment-send {
+  padding: 7px 12px;
+  background: var(--text);
+  color: white;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  cursor: pointer;
+}
+.comment-send:hover { opacity: 0.8; }
+
+/* ── Q blocks ── */
+.q-block {
+  background: var(--surface3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  margin-bottom: 10px;
+}
+.q-label {
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--text3);
+  letter-spacing: 0.04em;
+  margin-bottom: 6px;
+  display: flex; align-items: center; gap: 6px;
+}
+.q-number {
+  width: 17px; height: 17px;
+  border-radius: 50%;
+  background: var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 9.5px;
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--text3);
+  flex-shrink: 0;
+}
+.q-text {
+  font-size: 13.5px;
+  color: var(--text2);
+  line-height: 1.7;
+  white-space: pre-wrap;
+  cursor: text;
+  outline: none;
+  min-height: 22px;
+  font-weight: 300;
+}
+.q-text:empty::before { content: attr(data-placeholder); color: var(--text3); pointer-events: none; }
+.q-text:focus { outline: none; color: var(--text); }
+
+/* ── Output block ── */
+.output-block {
+  background: var(--surface3);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--text3);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 11px 14px;
+  margin-bottom: 10px;
+  font-size: 13px;
+  color: var(--text2);
+  line-height: 1.7;
+  white-space: pre-wrap;
+  cursor: text;
+  outline: none;
+  font-weight: 300;
+}
+.output-block:focus { outline: none; color: var(--text); }
+
+/* ── Chat panel — floats like sidebar panel ── */
+.chat-panel {
+  width: 300px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--surface);
+  border-radius: var(--radius) var(--radius) 0 0;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.chat-header {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.chat-header-title {
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--text);
+  display: flex; align-items: center; gap: 6px;
+}
+
+.chat-mode-badge {
+  font-size: 9.5px;
+  font-family: 'JetBrains Mono', monospace;
+  padding: 2px 7px;
+  border-radius: 20px;
+  background: var(--surface2);
+  color: var(--text3);
+}
+.chat-mode-badge.upload { background: var(--purple-light); color: var(--purple); }
+.chat-mode-badge.thinking { background: var(--amber-light); color: var(--amber); }
+
+.chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 14px 14px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.msg { max-width: 100%; }
+.msg-role {
+  font-size: 9.5px;
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--text3);
+  margin-bottom: 4px;
+}
+.msg-role.you { color: var(--amber); }
+.msg-role.claude { color: var(--purple); }
+
+.msg-bubble {
+  font-size: 12.5px;
+  line-height: 1.65;
+  color: var(--text2);
+  background: var(--surface2);
+  border-radius: var(--radius-sm);
+  padding: 9px 11px;
+  font-weight: 300;
+}
+.msg-bubble.you { background: var(--surface2); color: var(--text); }
+.msg-bubble.claude { background: var(--surface2); }
+
+.msg-actions {
+  display: flex;
+  gap: 5px;
+  margin-top: 6px;
+  flex-wrap: wrap;
+}
+
+.msg-action-btn {
+  font-size: 11px;
+  padding: 4px 10px;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: var(--surface);
+  color: var(--text2);
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  transition: all 0.1s;
+}
+.msg-action-btn:hover { background: var(--surface2); border-color: var(--border2); }
+
+.typing-indicator {
+  display: none;
+  gap: 4px;
+  padding: 9px 11px;
+  background: var(--surface2);
+  border-radius: var(--radius-sm);
+  width: fit-content;
+}
+.typing-indicator.show { display: flex; }
+.typing-dot {
+  width: 4px; height: 4px;
+  border-radius: 50%;
+  background: var(--text3);
+  animation: bounce 1.2s infinite;
+}
+.typing-dot:nth-child(2) { animation-delay: 0.2s; }
+.typing-dot:nth-child(3) { animation-delay: 0.4s; }
+@keyframes bounce { 0%,60%,100%{transform:translateY(0)} 30%{transform:translateY(-4px)} }
+
+.chat-input-area {
+  padding: 10px 12px 13px;
+  border-top: 1px solid var(--border);
+}
+
+.chat-input-wrap {
+  display: flex;
+  gap: 6px;
+  align-items: flex-end;
+}
+
+.chat-input {
+  flex: 1;
+  padding: 8px 11px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-family: 'Inter', sans-serif;
+  font-size: 12.5px;
+  background: var(--surface2);
+  color: var(--text);
+  outline: none;
+  resize: none;
+  line-height: 1.5;
+  max-height: 100px;
+  overflow-y: auto;
+}
+.chat-input:focus { border-color: var(--border2); background: var(--surface); }
+.chat-input::placeholder { color: var(--text3); }
+
+.chat-send {
+  width: 30px; height: 30px;
+  background: var(--text);
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  transition: opacity 0.1s;
+}
+.chat-send:hover { opacity: 0.75; }
+.chat-send:disabled { background: var(--border); cursor: not-allowed; }
+
+.chat-hints {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+  margin-bottom: 7px;
+}
+.hint-pill {
+  font-size: 10.5px;
+  padding: 3px 8px;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  color: var(--text3);
+  cursor: pointer;
+  background: var(--surface);
+  transition: all 0.1s;
+  font-family: 'Inter', sans-serif;
+}
+.hint-pill:hover { border-color: var(--border2); color: var(--text2); }
+
+/* ── Upload area ── */
+.upload-area {
+  padding: 8px 12px;
+  border-top: 1px solid var(--border);
+}
+.upload-btn {
+  width: 100%;
+  padding: 6px;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-sm);
+  background: none;
+  color: var(--text3);
+  font-family: 'Inter', sans-serif;
+  font-size: 11.5px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  transition: all 0.1s;
+}
+.upload-btn:hover { border-color: var(--border2); color: var(--text2); }
+.file-preview { display: none; flex-wrap: wrap; gap: 5px; margin-top: 5px; }
+.file-preview.has-files { display: flex; }
+.file-tag {
+  font-size: 10.5px;
+  padding: 2px 8px;
+  border-radius: 5px;
+  background: var(--purple-light);
+  color: var(--purple);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.file-tag button { background: none; border: none; cursor: pointer; color: var(--purple); font-size: 12px; padding: 0; line-height: 1; }
+
+/* ── Settings modal — floats like reference panel ── */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.25);
+  z-index: 100;
+  align-items: center;
+  justify-content: center;
+}
+.modal-overlay.show { display: flex; }
+.modal {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 28px;
+  width: 420px;
+  max-width: 90vw;
+  box-shadow: var(--shadow-lg);
+}
+.modal h3 { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 500; margin-bottom: 6px; letter-spacing: -0.02em; }
+.modal p { font-size: 12.5px; color: var(--text2); margin-bottom: 18px; line-height: 1.6; font-weight: 300; }
+.modal-label { font-size: 11px; color: var(--text3); font-family: 'JetBrains Mono', monospace; margin-bottom: 6px; letter-spacing: 0.04em; }
+.modal-input {
+  width: 100%;
+  padding: 9px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12.5px;
+  background: var(--surface2);
+  color: var(--text);
+  outline: none;
+  margin-bottom: 18px;
+  letter-spacing: 0.02em;
+}
+.modal-input:focus { border-color: var(--border2); background: var(--surface); }
+.modal-row { display: flex; gap: 8px; justify-content: flex-end; }
+.modal-cancel {
+  padding: 8px 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: none;
+  font-family: 'Inter', sans-serif;
+  font-size: 12.5px;
+  cursor: pointer;
+  color: var(--text2);
+}
+.modal-cancel:hover { background: var(--surface2); }
+.modal-ok {
+  padding: 8px 18px;
+  background: var(--text);
+  color: white;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-family: 'Inter', sans-serif;
+  font-size: 12.5px;
+  font-weight: 500;
+  cursor: pointer;
+}
+.modal-ok:hover { opacity: 0.8; }
+.modal-status { font-size: 11px; font-family: 'JetBrains Mono', monospace; padding: 6px 10px; border-radius: var(--radius-sm); margin-bottom: 14px; }
+.modal-status.ok { background: var(--green-light); color: var(--green); }
+.modal-status.missing { background: var(--red-light); color: var(--red); }
+
+/* ── Loading bar ── */
+.loading-bar {
+  display: none;
+  height: 1.5px;
+  background: var(--text);
+  position: fixed;
+  top: 0; left: 0;
+  z-index: 999;
+  animation: loadpulse 1.2s ease-in-out infinite;
+}
+.loading-bar.show { display: block; width: 100%; }
+@keyframes loadpulse { 0%,100%{opacity:0.3} 50%{opacity:1} }
+</style>
+</head>
+<body>
+
+<div class="loading-bar" id="loading-bar"></div>
+
+<!-- Sidebar -->
+<aside class="sidebar">
+  <div class="sidebar-header">
+    <div class="logo">Verc <span>Notebook</span></div>
+    <div class="logo-sub">internship · 2026</div>
+  </div>
+  <button class="new-entry-btn" onclick="newEntry()">
+    <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+    New entry
+  </button>
+  <div class="sidebar-section">Entries</div>
+  <div class="entries-list" id="entries-list"></div>
+  <div class="sidebar-footer">
+    <div class="insight-count" id="insight-count">
+      <span>0</span> insights captured
+    </div>
+    <button class="settings-btn" onclick="showModal()" title="API Key 设置">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+    </button>
+  </div>
+</aside>
+
+<!-- Main -->
+<main class="main">
+  <div class="toolbar">
+    <span class="toolbar-date" id="toolbar-date"></span>
+    <button class="tb-btn" onclick="exportEntry()">
+      <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+      Export
+    </button>
+    <button class="tb-btn primary" onclick="saveCurrentEntry()">
+      <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+      Save
+    </button>
+  </div>
+
+  <div class="content-area">
+    <!-- Doc panel -->
+    <div class="doc-panel" id="doc-panel">
+      <div class="doc-empty" id="doc-empty">
+        <div class="doc-empty-icon">
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" color="var(--text3)"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        </div>
+        <h3>No entry selected</h3>
+        <p>Create a new entry or send your notes in the chat — I'll structure it for you.</p>
+      </div>
+      <div id="doc-content" style="display:none"></div>
+    </div>
+
+    <!-- Chat panel -->
+    <div class="chat-panel">
+      <div class="chat-header">
+        <div class="chat-header-title">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+          Claude
+          <span class="chat-mode-badge" id="chat-mode-badge">ready</span>
+        </div>
+      </div>
+
+      <div class="chat-messages" id="chat-messages">
+        <div class="msg">
+          <div class="msg-role claude">claude</div>
+          <div class="msg-bubble claude">把你今天的手写笔记、遇到的人发给我，我帮你整理成结构化的日志，然后你可以直接在文档里编辑和 comment。</div>
+        </div>
+      </div>
+
+      <div class="typing-indicator" id="typing-indicator">
+        <div class="typing-dot"></div>
+        <div class="typing-dot"></div>
+        <div class="typing-dot"></div>
+      </div>
+
+      <div class="upload-area">
+        <button class="upload-btn" onclick="document.getElementById('file-input').click()">
+          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+          上传笔记图片 / 截图
+        </button>
+        <input type="file" id="file-input" accept="image/*" multiple style="display:none" onchange="handleFiles(this.files)">
+        <div class="file-preview" id="file-preview"></div>
+      </div>
+
+      <div class="chat-input-area">
+        <div class="chat-hints" id="chat-hints">
+          <span class="hint-pill" onclick="useHint('帮我总结今天的收获')">总结今天</span>
+          <span class="hint-pill" onclick="useHint('针对这个block，帮我想得更深一点')">深入这个block</span>
+          <span class="hint-pill" onclick="useHint('这周的pattern是什么？')">周回顾</span>
+        </div>
+        <div class="chat-input-wrap">
+          <textarea class="chat-input" id="chat-input" placeholder="发笔记、问问题、或说「帮我修改第X个block」…" rows="1"
+            onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMessage()}"
+            oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'"></textarea>
+          <button class="chat-send" id="chat-send-btn" onclick="sendMessage()">
+            <svg width="14" height="14" fill="none" stroke="white" stroke-width="2" viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- Settings Modal -->
+<div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <h3>Settings</h3>
+    <p>输入你的 Anthropic API key，只存在本地浏览器，不会上传任何地方。<br>充值 $5 够用半年+，整理笔记用 Sonnet，comment 用 Haiku，自动省钱。</p>
+    <div id="modal-key-status"></div>
+    <div class="modal-label">ANTHROPIC API KEY</div>
+    <input class="modal-input" type="password" id="api-key-input" placeholder="sk-ant-api03-..." />
+    <div class="modal-row">
+      <button class="modal-cancel" onclick="closeModal()">关闭</button>
+      <button class="modal-ok" onclick="saveApiKey()">保存</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── State ──
+let apiKey = localStorage.getItem('verc_api_key') || '';
+let entries = JSON.parse(localStorage.getItem('verc_entries') || '[]');
+let currentEntryId = null;
+let uploadedImages = [];
+let chatHistory = [];
+
+// ── Init ──
+document.getElementById('toolbar-date').textContent = new Date().toLocaleDateString('zh-CN', {year:'numeric',month:'long',day:'numeric',weekday:'long'});
+renderEntriesList();
+updateInsightCount();
+updateModalStatus();
+
+// ── API Key / Settings ──
+function showModal() {
+  updateModalStatus();
+  const inp = document.getElementById('api-key-input');
+  inp.value = apiKey ? '••••••••••••••••' : '';
+  document.getElementById('modal-overlay').classList.add('show');
+  if (!apiKey) inp.focus();
+}
+function closeModal() { document.getElementById('modal-overlay').classList.remove('show'); }
+function saveApiKey() {
+  const v = document.getElementById('api-key-input').value.trim();
+  if (v && !v.startsWith('•')) { apiKey = v; localStorage.setItem('verc_api_key', v); }
+  updateModalStatus();
+  closeModal();
+}
+function updateModalStatus() {
+  const el = document.getElementById('modal-key-status');
+  if (!el) return;
+  if (apiKey) {
+    el.className = 'modal-status ok';
+    el.textContent = '✓ API key 已设置';
+  } else {
+    el.className = 'modal-status missing';
+    el.textContent = '⚠ 尚未设置 API key';
+  }
+}
+
+// ── Entries list ──
+function renderEntriesList() {
+  const list = document.getElementById('entries-list');
+  if (!entries.length) {
+    list.innerHTML = '<div style="padding:12px;font-size:12px;color:var(--text3);text-align:center">还没有记录</div>';
+    return;
+  }
+  list.innerHTML = entries.slice().reverse().map(e => `
+    <div class="entry-item ${e.id === currentEntryId ? 'active' : ''}" onclick="loadEntry('${e.id}')">
+      <div class="entry-item-date">${e.dateShort || e.id}</div>
+      <div class="entry-item-title">${e.title || 'Untitled'}</div>
+    </div>
+  `).join('');
+}
+
+function updateInsightCount() {
+  const total = entries.reduce((n, e) => n + (e.blocks || []).filter(b => b.insight).length, 0);
+  document.getElementById('insight-count').innerHTML = `<span>${total}</span> insights captured`;
+}
+
+// ── New entry ──
+function newEntry() {
+  const id = Date.now().toString();
+  const now = new Date();
+  const entry = {
+    id,
+    title: now.toLocaleDateString('zh-CN', {month:'long', day:'numeric', weekday:'short'}),
+    dateShort: now.toLocaleDateString('zh-CN', {month:'numeric', day:'numeric'}),
+    date: now.toISOString(),
+    blocks: [],
+    outputs: [],
+    questions: [],
+    tags: []
+  };
+  entries.push(entry);
+  saveEntries();
+  loadEntry(id);
+}
+
+// ── Load entry ──
+function loadEntry(id) {
+  currentEntryId = id;
+  const entry = entries.find(e => e.id === id);
+  if (!entry) return;
+  renderEntriesList();
+  renderDoc(entry);
+}
+
+// ── Render doc ──
+function renderDoc(entry) {
+  document.getElementById('doc-empty').style.display = 'none';
+  const doc = document.getElementById('doc-content');
+  doc.style.display = 'block';
+
+  doc.innerHTML = `
+    <input class="doc-title-input" id="doc-title" value="${esc(entry.title || '')}" placeholder="Entry title…" oninput="updateTitle(this.value)">
+    <div class="doc-meta" id="doc-meta"></div>
+
+    <div class="doc-section" id="section-people">
+      <div class="section-header">
+        <span class="section-label">People</span>
+        <div class="section-divider"></div>
+      </div>
+      <div id="blocks-container"></div>
+    </div>
+
+    <div class="doc-section" id="section-outputs">
+      <div class="section-header">
+        <span class="section-label">Work output</span>
+        <div class="section-divider"></div>
+      </div>
+      <div id="outputs-container"></div>
+      <button onclick="addOutputBlock()" style="font-size:12px;color:var(--text3);background:none;border:none;cursor:pointer;padding:4px 0;display:flex;align-items:center;gap:5px">
+        <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+        Add output
+      </button>
+    </div>
+
+    <div class="doc-section" id="section-questions">
+      <div class="section-header">
+        <span class="section-label">Questions to reflect on</span>
+        <div class="section-divider"></div>
+      </div>
+      <div id="questions-container"></div>
+    </div>
+  `;
+
+  renderBlocks(entry);
+  renderOutputs(entry);
+  renderQuestions(entry);
+  renderTags(entry);
+}
+
+function renderBlocks(entry) {
+  const container = document.getElementById('blocks-container');
+  if (!container) return;
+  container.innerHTML = (entry.blocks || []).map((b, i) => blockHTML(b, i)).join('') ||
+    '<div style="font-size:13px;color:var(--text3);padding:8px 0">Send your notes in the chat — I\'ll fill this in.</div>';
+}
+
+function blockHTML(b, i) {
+  const dotColor = {client:'#1A5C52', expert:'#4A3F6B', team:'#8B4513', tech:'#8B2020'}[b.role] || '#A09A93';
+  const roleClass = b.role ? `active-${b.role}` : '';
+  const hasComment = b.comments && b.comments.length;
+  return `
+    <div class="block ${hasComment ? 'has-comment' : ''}" id="block-${i}">
+      <div class="block-header">
+        <div class="block-person-dot" style="background:${dotColor}"></div>
+        <span class="block-name">${esc(b.name || '')}</span>
+        <span class="block-role">${esc(b.role || '')} ${b.context ? '· ' + esc(b.context) : ''}</span>
+      </div>
+      <div class="block-body" contenteditable="true"
+        onblur="updateBlockContent(${i}, this.innerText)">${esc(b.content || '')}</div>
+      <div class="block-actions">
+        <button class="block-btn ${hasComment ? 'comment-active' : ''}" title="Comment" onclick="toggleComment(${i})">
+          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+        </button>
+        <button class="block-btn" title="Ask Claude about this" onclick="askAboutBlock(${i})">
+          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3M12 17h.01"/></svg>
+        </button>
+        <button class="block-btn" title="Delete" onclick="deleteBlock(${i})">
+          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6M10 11v6M14 11v6M9 6V4h6v2"/></svg>
+        </button>
+      </div>
+      <div class="comment-thread ${hasComment ? 'open' : ''}" id="comment-${i}">
+        <div id="comments-list-${i}">
+          ${(b.comments || []).map(c => `
+            <div class="comment-item">
+              <div class="comment-role ${c.role === 'you' ? 'you' : 'claude'}">${c.role}</div>
+              <div class="comment-text">${esc(c.text)}</div>
+            </div>
+          `).join('')}
+        </div>
+        <div class="comment-input-row">
+          <input class="comment-input" id="comment-input-${i}" placeholder="修改意见或提问…"
+            onkeydown="if(event.key==='Enter'){sendComment(${i})}">
+          <button class="comment-send" onclick="sendComment(${i})">发送</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function renderOutputs(entry) {
+  const c = document.getElementById('outputs-container');
+  if (!c) return;
+  c.innerHTML = (entry.outputs || []).map((o, i) => `
+    <div class="output-block" contenteditable="true"
+      onblur="updateOutput(${i}, this.innerText)">${esc(o)}</div>
+  `).join('');
+}
+
+function renderQuestions(entry) {
+  const c = document.getElementById('questions-container');
+  if (!c) return;
+  c.innerHTML = (entry.questions || []).map((q, i) => `
+    <div class="q-block">
+      <div class="q-label">
+        <div class="q-number">${i+1}</div>
+        反思问题
+      </div>
+      <div class="q-text" contenteditable="true"
+        onblur="updateQuestion(${i}, this.innerText)">${esc(q)}</div>
+    </div>
+  `).join('');
+}
+
+function renderTags(entry) {
+  const meta = document.getElementById('doc-meta');
+  if (!meta) return;
+  const roles = [...new Set((entry.blocks || []).map(b => b.role).filter(Boolean))];
+  const hasOutputs = (entry.outputs || []).length > 0;
+  meta.innerHTML = roles.map(r =>
+    `<span class="doc-tag active-${r}">${r}</span>`
+  ).join('') + (hasOutputs ? '<span class="doc-tag active-output">output</span>' : '');
+}
+
+// ── Block actions ──
+function updateTitle(v) {
+  const entry = entries.find(e => e.id === currentEntryId);
+  if (entry) { entry.title = v; saveEntries(); renderEntriesList(); }
+}
+
+function updateBlockContent(i, text) {
+  const entry = entries.find(e => e.id === currentEntryId);
+  if (entry && entry.blocks[i]) { entry.blocks[i].content = text; saveEntries(); updateInsightCount(); }
+}
+
+function updateOutput(i, text) {
+  const entry = entries.find(e => e.id === currentEntryId);
+  if (entry && entry.outputs) { entry.outputs[i] = text; saveEntries(); }
+}
+
+function updateQuestion(i, text) {
+  const entry = entries.find(e => e.id === currentEntryId);
+  if (entry && entry.questions) { entry.questions[i] = text; saveEntries(); }
+}
+
+function deleteBlock(i) {
+  const entry = entries.find(e => e.id === currentEntryId);
+  if (entry) { entry.blocks.splice(i, 1); saveEntries(); renderDoc(entry); }
+}
+
+function addOutputBlock() {
+  const entry = entries.find(e => e.id === currentEntryId);
+  if (!entry) return;
+  if (!entry.outputs) entry.outputs = [];
+  entry.outputs.push('');
+  saveEntries();
+  renderOutputs(entry);
+  renderTags(entry);
+}
+
+function toggleComment(i) {
+  const thread = document.getElementById(`comment-${i}`);
+  thread.classList.toggle('open');
+  if (thread.classList.contains('open')) document.getElementById(`comment-input-${i}`).focus();
+}
+
+function askAboutBlock(i) {
+  const entry = entries.find(e => e.id === currentEntryId);
+  if (!entry || !entry.blocks[i]) return;
+  const b = entry.blocks[i];
+  document.getElementById('chat-input').value = `关于 ${b.name} 的这个insight：「${b.content}」——帮我想得更深一点`;
+  document.getElementById('chat-input').focus();
+}
+
+// ── Comments ──
+async function sendComment(blockIndex) {
+  const entry = entries.find(e => e.id === currentEntryId);
+  if (!entry) return;
+  const input = document.getElementById(`comment-input-${blockIndex}`);
+  const text = input.value.trim();
+  if (!text) return;
+  input.value = '';
+  if (!entry.blocks[blockIndex].comments) entry.blocks[blockIndex].comments = [];
+  entry.blocks[blockIndex].comments.push({ role: 'you', text });
+  renderDoc(entry);
+  toggleComment(blockIndex);
+
+  const block = entry.blocks[blockIndex];
+  const prompt = `这是一个internship日志中的block内容：
+人物：${block.name}（${block.role}，${block.context || ''}）
+内容：${block.content}
+
+用户的comment/修改意见：${text}
+
+请直接给出修改后的内容，或者回答用户的问题。如果是修改请求，只返回新的block内容文字，不要加任何前缀。如果是问题，简短回答（2-3句）。`;
+
+  const reply = await callClaude(prompt, [], true);
+  entry.blocks[blockIndex].comments.push({ role: 'claude', text: reply });
+  saveEntries();
+  renderDoc(entry);
+  toggleComment(blockIndex);
+}
+
+// ── File upload ──
+function handleFiles(files) {
+  Array.from(files).forEach(f => {
+    const reader = new FileReader();
+    reader.onload = e => {
+      uploadedImages.push({ name: f.name, data: e.target.result.split(',')[1], type: f.type });
+      renderFilePreviews();
+    };
+    reader.readAsDataURL(f);
+  });
+  document.getElementById('chat-mode-badge').textContent = 'with images';
+  document.getElementById('chat-mode-badge').className = 'chat-mode-badge upload';
+}
+
+function renderFilePreviews() {
+  const fp = document.getElementById('file-preview');
+  fp.className = 'file-preview' + (uploadedImages.length ? ' has-files' : '');
+  fp.innerHTML = uploadedImages.map((f, i) =>
+    `<span class="file-tag">
+      <svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+      ${f.name}
+      <button onclick="removeFile(${i})">×</button>
+    </span>`
+  ).join('');
+}
+
+function removeFile(i) {
+  uploadedImages.splice(i, 1);
+  renderFilePreviews();
+  if (!uploadedImages.length) {
+    document.getElementById('chat-mode-badge').textContent = 'ready';
+    document.getElementById('chat-mode-badge').className = 'chat-mode-badge';
+  }
+}
+
+// ── Chat ──
+function useHint(text) {
+  document.getElementById('chat-input').value = text;
+  document.getElementById('chat-input').focus();
+}
+
+function appendMessage(role, text, actions) {
+  const msgs = document.getElementById('chat-messages');
+  const div = document.createElement('div');
+  div.className = 'msg';
+  div.innerHTML = `
+    <div class="msg-role ${role}">${role}</div>
+    <div class="msg-bubble ${role}">${text.replace(/\n/g, '<br>')}</div>
+    ${actions ? `<div class="msg-actions">${actions}</div>` : ''}
+  `;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+async function sendMessage() {
+  const input = document.getElementById('chat-input');
+  const text = input.value.trim();
+  if (!text && !uploadedImages.length) return;
+
+  const displayText = text || '（已附图片）';
+  appendMessage('you', displayText);
+  input.value = '';
+  input.style.height = 'auto';
+  chatHistory.push({ role: 'user', content: text || 'Please analyze these notes.' });
+
+  const images = [...uploadedImages];
+  uploadedImages = [];
+  renderFilePreviews();
+  document.getElementById('chat-mode-badge').textContent = 'thinking…';
+
+  setTyping(true);
+
+  const systemPrompt = `你是一个帮助产品设计师记录internship成长的AI助手。用户在Verc（一家AI-native产品公司）实习，目标是在2026年12月毕业后进入大厂AI设计岗。
+
+你的任务：
+1. 当用户发来手写笔记（图片）或会议描述时，整理成结构化的日志entry。输出一个JSON对象，格式如下：
+{
+  "action": "create_entry",
+  "title": "日期+简短标题",
+  "blocks": [{"name":"人名","role":"client|expert|team|tech","context":"一句话背景","content":"核心insight，1-3句"}],
+  "outputs": ["工作产出1", "工作产出2"],
+  "questions": ["反思问题1", "反思问题2", "反思问题3"]
+}
+
+2. 当用户提问或讨论时，直接用中文回答，不输出JSON。
+
+3. 当用户要修改某个block时，说明修改后输出：{"action":"update_block","index":N,"content":"新内容"}
+
+Insight原则：每个block的content要聚焦在"这个人给了我什么对AI产品设计有价值的视角"，而不是会议summary。要有一定深度，帮用户看到他们自己没意识到的pattern。
+
+如果笔记内容不清楚，做合理推断，并在回复时说明你的假设，用户可以纠正。`;
+
+  const userContent = [];
+  if (images.length) {
+    images.forEach(img => userContent.push({ type: 'image', source: { type: 'base64', media_type: img.type, data: img.data } }));
+  }
+  if (text) userContent.push({ type: 'text', text });
+  else userContent.push({ type: 'text', text: 'Please analyze the uploaded notes and create a structured journal entry.' });
+
+  const messages = [
+    ...chatHistory.slice(-8, -1),
+    { role: 'user', content: userContent }
+  ];
+
+  const reply = await callClaude(systemPrompt, messages, false);
+  setTyping(false);
+  chatHistory.push({ role: 'assistant', content: reply });
+
+  // Try to parse JSON action
+  let handled = false;
+  const jsonMatch = reply.match(/\{[\s\S]*"action"[\s\S]*\}/);
+  if (jsonMatch) {
+    try {
+      const parsed = JSON.parse(jsonMatch[0]);
+      if (parsed.action === 'create_entry') {
+        handled = true;
+        const textReply = reply.replace(jsonMatch[0], '').trim();
+        if (textReply) appendMessage('claude', textReply);
+
+        let entry = entries.find(e => e.id === currentEntryId);
+        if (!entry) {
+          const id = Date.now().toString();
+          entry = { id, title: parsed.title || new Date().toLocaleDateString('zh-CN',{month:'long',day:'numeric'}), dateShort: new Date().toLocaleDateString('zh-CN',{month:'numeric',day:'numeric'}), date: new Date().toISOString(), blocks: [], outputs: [], questions: [], tags: [] };
+          entries.push(entry);
+          currentEntryId = id;
+        }
+        entry.title = parsed.title || entry.title;
+        entry.blocks = parsed.blocks || [];
+        entry.outputs = parsed.outputs || [];
+        entry.questions = parsed.questions || [];
+        saveEntries();
+        renderEntriesList();
+        renderDoc(entry);
+        updateInsightCount();
+
+        appendMessage('claude', '已生成日志 ↑\n\n点击任意 block 可以直接编辑，点击 💬 图标可以 comment 让我修改。', `
+          <button class="msg-action-btn" onclick="useHint('这个总结哪里不准确？帮我修改')">纠正</button>
+          <button class="msg-action-btn" onclick="useHint('帮我把这周的entries总结一下')">周回顾</button>
+        `);
+      } else if (parsed.action === 'update_block') {
+        handled = true;
+        const entry = entries.find(e => e.id === currentEntryId);
+        if (entry && entry.blocks[parsed.index] !== undefined) {
+          entry.blocks[parsed.index].content = parsed.content;
+          saveEntries();
+          renderDoc(entry);
+          appendMessage('claude', `Block ${parsed.index + 1} 已更新。`);
+        }
+      }
+    } catch(e) {}
+  }
+
+  if (!handled) {
+    appendMessage('claude', reply);
+  }
+
+  document.getElementById('chat-mode-badge').textContent = 'ready';
+  document.getElementById('chat-mode-badge').className = 'chat-mode-badge';
+}
+
+// ── Call Claude — dual model ──
+// useHaiku=true  → haiku  (comments, quick Q&A)
+// useHaiku=false → sonnet (note structuring, insights, weekly review)
+async function callClaude(system, messages, useHaiku) {
+  if (!apiKey) {
+    showModal();
+    return '请先在左下角 ⚙ 设置 API key。';
+  }
+  setLoading(true);
+  const model = useHaiku
+    ? 'claude-haiku-4-5-20251001'
+    : 'claude-sonnet-4-20250514';
+  const max_tokens = useHaiku ? 800 : 2000;
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ model, max_tokens, system, messages })
+    });
+    const data = await res.json();
+    if (data.error) return `Error: ${data.error.message}`;
+    return data.content.map(c => c.text || '').join('');
+  } catch(e) {
+    return '网络错误，请检查 API key 或网络连接。';
+  } finally {
+    setLoading(false);
+  }
+}
+
+// ── Helpers ──
+function setTyping(on) {
+  const t = document.getElementById('typing-indicator');
+  const msgs = document.getElementById('chat-messages');
+  t.className = 'typing-indicator' + (on ? ' show' : '');
+  if (on) msgs.appendChild(t);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function setLoading(on) {
+  document.getElementById('loading-bar').className = 'loading-bar' + (on ? ' show' : '');
+  document.getElementById('chat-send-btn').disabled = on;
+}
+
+function saveEntries() {
+  localStorage.setItem('verc_entries', JSON.stringify(entries));
+}
+
+function esc(str) {
+  return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function exportEntry() {
+  const entry = entries.find(e => e.id === currentEntryId);
+  if (!entry) return;
+  const lines = [`# ${entry.title}\n`];
+  (entry.blocks || []).forEach(b => {
+    lines.push(`## ${b.name} (${b.role}${b.context ? ' · ' + b.context : ''})`);
+    lines.push(b.content + '\n');
+  });
+  if ((entry.outputs || []).length) {
+    lines.push('## Work Output');
+    entry.outputs.forEach(o => lines.push('- ' + o));
+    lines.push('');
+  }
+  if ((entry.questions || []).length) {
+    lines.push('## Reflect');
+    entry.questions.forEach((q,i) => lines.push(`${i+1}. ${q}`));
+  }
+  const blob = new Blob([lines.join('\n')], { type: 'text/markdown' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `verc-${entry.id}.md`;
+  a.click();
+}
+
+function saveCurrentEntry() {
+  saveEntries();
+  const btn = document.querySelector('.tb-btn.primary');
+  const orig = btn.innerHTML;
+  btn.innerHTML = '<svg width="13" height="13" fill="none" stroke="white" stroke-width="2" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Saved';
+  setTimeout(() => btn.innerHTML = orig, 1500);
+}
+</script>
+</body>
+</html>
