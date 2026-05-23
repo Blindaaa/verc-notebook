@@ -14,45 +14,43 @@
     },
     {
       "id": "1779393288869",
-      "title": "Compass Recovery Group AI Voice Agent Demo & Buffalo Visit Planning",
+      "title": "2024-01-XX - Compass Recovery Group AI Voice Agent Demo & Buffalo Visit Planning",
       "dateShort": "5/21",
       "date": "2026-05-21T19:54:48.869Z",
       "blocks": [
         {
           "name": "Brian Malczewski",
           "role": "client",
-          "context": "Owner of Compass Recovery Group (debt collection agency in Buffalo), absorbing $8-12K/month in merchant fees, no after-hours coverage, manual texting workflows",
-          "content": "Brian's reaction—'That was pretty impressive'—came after seeing the agent handle identity verification, compliance disclosure, and escalation logic in real-time. His comparison to SiriusXM's AI agent shows he's calibrating quality against consumer-grade experiences, not just B2B tools. His caution about giving collectors 'free reign' on texting reveals a trust/control tension that AI can solve: automation doesn't just save cost, it enforces compliance guardrails he can't rely on humans for."
-        },
-        {
-          "name": "Dave Fiorello",
-          "role": "expert",
-          "context": "Trusted advisor to Brian, introduced Verc to Compass, raised merchant fee pass-through model with Nuve Commerce",
-          "content": "Dave's merchant fee insight ($8-12K/month absorbed by Compass) reframed the value prop from 'AI replaces after-hours staff' to 'AI unlocks revenue infrastructure changes.' This is a pattern in B2B AI: the automation itself is table stakes, but the *downstream business model shifts it enables* (like fee pass-through) are where ROI compounds. Dave's role as a trust bridge also shows that in regulated industries, referrals aren't just lead gen—they're de-risking mechanisms."
+          "context": "Compass Recovery Group team member participating in weekly sync",
+          "content": "Engaged in the AI voice agent demonstration and Buffalo visit logistics discussion, providing real-time feedback on the product direction."
         },
         {
           "name": "Thalita Berpan",
-          "role": "team",
-          "context": "Verc team member co-leading demo and compliance workflow, planning Buffalo onsite visit",
-          "content": "Thalita's ability to anchor the conversation around compliance artifacts (MSA redlines, security questionnaire) while live-demoing the product shows a dual fluency rare in early-stage sales: she's simultaneously de-risking legal/security blockers and proving product value. Her commitment to turn around the security questionnaire 'quickly using their compliance platform' signals that Verc is tooling compliance itself as a product feature, not just a sales bottleneck."
+          "role": "client",
+          "context": "Compass Recovery Group team member in weekly sync",
+          "content": "Participated in evaluating the voice agent demo and coordinating the on-site Buffalo visit plans."
         },
         {
-          "name": "Belinda Liu",
+          "name": "Dave Fiorello",
+          "role": "client",
+          "context": "Compass Recovery Group team member in weekly sync",
+          "content": "Collaborated on reviewing the AI voice agent capabilities and discussing implementation logistics for the Buffalo location."
+        },
+        {
+          "name": "Bektur Kenzhebaev",
           "role": "team",
-          "context": "Verc team member demoing dashboard, planning Buffalo onsite, co-leading implementation",
-          "content": "Belinda's dashboard walkthrough surfaced a design insight: exporting 'SMS opt-out requests' as a separate filter shows Verc is thinking about compliance UX, not just feature completeness. In debt collection, an opt-out isn't just a data point—it's a liability if mishandled. By making it a first-class export category, the dashboard becomes an audit trail, not just a monitoring tool. This is the difference between 'AI agent with logs' and 'AI agent built for regulated workflows.'"
+          "context": "Verc team member co-leading the Compass project",
+          "content": "Co-facilitated the demo presentation and Buffalo visit planning, coordinating cross-functional alignment between Verc and Compass teams."
         }
       ],
       "outputs": [
-        "Built after-hours AI voice agent script from scratch for debt collection compliance (FDCPA disclosures, identity verification, settlement escalation)",
-        "Configured Claude + VAPI integration for live voice agent demo (caller ID lookup, payment link SMS trigger, callback scheduling)",
-        "Designed Figma dashboard showing call logs, action items (callback requests with voice notes), SMS opt-outs, and export/reporting filters",
-        "End-to-end demo flow tested live with client on call (phone number identification → SSN verification → balance disclosure → payment link offer → settlement escalation)"
+        "AI Voice Agent Demo presentation to Compass Recovery Group",
+        "Buffalo visit logistics and planning coordination"
       ],
       "questions": [
-        "How do you decide what to automate vs. what to keep manual when the client's stated reason is 'I don't trust my team'? Is the design challenge to replace trust with transparency (audit logs), or to make the tool safe enough that trust isn't required?",
-        "Brian compared the AI agent to SiriusXM's consumer experience. What does it mean when B2B buyers calibrate quality against consumer AI, not enterprise software? Does this shift the design bar from 'feature parity with competitors' to 'feels as polished as ChatGPT'?",
-        "The dashboard export function treats 'SMS opt-outs' as a separate filter from 'call logs.' How do you design compliance features so they feel like risk mitigation tools, not just CYA checkboxes? What makes a compliance UX feel like it's *helping* the user, not just protecting the vendor?"
+        "What specific reactions did the Compass team have to the voice agent demo that could inform future AI healthcare product design?",
+        "How does planning an on-site visit with a healthcare client differ from remote collaboration, and what does this reveal about enterprise AI adoption?",
+        "What assumptions did you make about user needs before this demo, and how did the client's response validate or challenge them?"
       ],
       "tags": []
     }
